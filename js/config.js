@@ -8,11 +8,11 @@
 const CONFIG = {
   // GASウェブアプリのURL
   // 例: https://script.google.com/macros/s/【DEPLOYMENT_ID】/exec
-  GAS_API_URL: '',
+  GAS_API_URL: 'https://script.google.com/macros/s/.../exec',
 
   // モックモード（GAS未設定でもUI動作確認できる）
   // セットアップ完了後は false に変更
-  USE_MOCK: true,
+  USE_MOCK: false,
 
   // ローカルストレージのキープレフィックス
   STORAGE_PREFIX: 'ke_mitsumori_',
