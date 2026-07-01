@@ -8,7 +8,7 @@
 const CONFIG = {
   // GASウェブアプリのURL
   // 例: https://script.google.com/macros/s/【DEPLOYMENT_ID】/exec
-  GAS_API_URL: 'https://script.google.com/macros/s/.../exec',
+  GAS_API_URL: 'https://script.google.com/macros/s/AKfycbzYHNv06jKMJQL7R5MUkugxBQdWO2nQK4fYzE0cOg4hXP36WJ1O0CBxpkJZFIoJhk1K/exec',
 
   // モックモード（GAS未設定でもUI動作確認できる）
   // セットアップ完了後は false に変更
