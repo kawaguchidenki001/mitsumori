@@ -24,6 +24,15 @@ const QuoteEdit = {
     unitPrices: [],
     notesTemplates: [],
 
+    // tankatool(岐阜県公式単価DB)連携用
+    tankaPrices: null,
+    lineSourceMode: 'master', // 'master' | 'tanka' | 'free'
+
+    // 音声/AI入力用
+    aiPreviewItems: null,
+    aiRecognizing: false,
+    aiRecognition: null,
+
     isDirty: false,
     editingLine: null,
     editingLineIndex: -1
@@ -363,6 +372,7 @@ const QuoteEdit = {
 
     html += `
       <div class="qe-add-category">
+        <button class="icon-btn qe-ai-input-btn" id="qe-ai-input-btn">🎤 音声/AI入力</button>
         <button class="icon-btn" id="qe-add-category-btn">＋ 工種を追加</button>
       </div>
     `;
@@ -487,6 +497,10 @@ const QuoteEdit = {
 
     document.getElementById('qe-add-category-btn')?.addEventListener('click', () => {
       this.openCategoryPickerDialog();
+    });
+
+    document.getElementById('qe-ai-input-btn')?.addEventListener('click', () => {
+      this.openAiInputDialog();
     });
   },
 
@@ -720,6 +734,7 @@ const QuoteEdit = {
 
     this.state.editingLine = line;
     this.state.editingLineIndex = idx;
+    this.state.lineSourceMode = 'master'; // ダイアログを開くたびに既定モードへ戻す
 
     const dialog = document.getElementById('qe-dialog');
     dialog.innerHTML = `
@@ -740,7 +755,12 @@ const QuoteEdit = {
             </div>
             <div class="form-group">
               <label>品名 <span class="required">*</span></label>
-              <input type="text" id="ql-item-name" value="${this.escapeHtml(line.item_name)}" placeholder="単価マスタを検索 or 直接入力" autocomplete="off">
+              <div class="ql-source-tabs" id="ql-source-tabs">
+                <button type="button" class="ql-source-tab active" data-mode="master">単価マスタ</button>
+                <button type="button" class="ql-source-tab" data-mode="tanka">tankatool</button>
+                <button type="button" class="ql-source-tab" data-mode="free">自由入力</button>
+              </div>
+              <input type="text" id="ql-item-name" value="${this.escapeHtml(line.item_name)}" placeholder="単価マスタを検索" autocomplete="off">
               <div id="ql-suggestions" class="ql-suggestions"></div>
             </div>
             <div class="form-group">
@@ -796,6 +816,10 @@ const QuoteEdit = {
     itemInput.addEventListener('input', () => this.updateSuggestions(itemInput.value));
     itemInput.addEventListener('focus', () => this.updateSuggestions(itemInput.value));
 
+    document.getElementById('ql-source-tabs').querySelectorAll('.ql-source-tab').forEach(tab => {
+      tab.addEventListener('click', () => this.switchLineSourceMode(tab.dataset.mode));
+    });
+
     document.getElementById('qe-dialog-overlay').addEventListener('click', (e) => {
       if (e.target.id === 'qe-dialog-overlay') this.closeLineDialog();
     });
@@ -806,13 +830,83 @@ const QuoteEdit = {
     setTimeout(() => itemInput.focus(), 50);
   },
 
+  /**
+   * 品名入力のデータソースを切り替える（単価マスタ / tankatool / 自由入力）
+   */
+  async switchLineSourceMode(mode) {
+    this.state.lineSourceMode = mode;
+
+    const tabsEl = document.getElementById('ql-source-tabs');
+    if (tabsEl) {
+      tabsEl.querySelectorAll('.ql-source-tab').forEach(t => {
+        t.classList.toggle('active', t.dataset.mode === mode);
+      });
+    }
+
+    const itemInput = document.getElementById('ql-item-name');
+    const sugEl = document.getElementById('ql-suggestions');
+    if (!itemInput) return;
+
+    if (mode === 'master') {
+      itemInput.placeholder = '単価マスタを検索';
+    } else if (mode === 'tanka') {
+      itemInput.placeholder = 'tankatool（岐阜県公式単価）を検索';
+      await this.ensureTankaLoaded();
+    } else {
+      itemInput.placeholder = '品名を直接入力（検索候補は出ません）';
+      if (sugEl) { sugEl.innerHTML = ''; sugEl.style.display = 'none'; }
+    }
+
+    if (mode !== 'free') {
+      this.updateSuggestions(itemInput.value);
+    }
+    itemInput.focus();
+  },
+
+  /**
+   * tankatool(岐阜県単価DB, kawaguchidenki001.github.io/tanka-search/)のデータを
+   * 初回利用時にだけ読み込み、以降はキャッシュを使う。
+   */
+  async ensureTankaLoaded() {
+    if (this.state.tankaPrices) return;
+
+    const sugEl = document.getElementById('ql-suggestions');
+    if (sugEl) {
+      sugEl.innerHTML = '<div class="ql-suggest-loading">tankatoolのデータを読み込み中…</div>';
+      sugEl.style.display = 'block';
+    }
+
+    try {
+      const res = await fetch('https://kawaguchidenki001.github.io/tanka-search/unit_prices.json');
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      this.state.tankaPrices = await res.json();
+    } catch (err) {
+      Util.toast(`tankatoolのデータ取得に失敗しました: ${err.message}`, 'error');
+      this.state.tankaPrices = [];
+    }
+
+    if (sugEl) { sugEl.innerHTML = ''; sugEl.style.display = 'none'; }
+  },
+
   updateSuggestions(keyword) {
     const sugEl = document.getElementById('ql-suggestions');
     if (!sugEl) return;
 
+    // 自由入力モードでは候補を出さない
+    if (this.state.lineSourceMode === 'free') {
+      sugEl.innerHTML = '';
+      sugEl.style.display = 'none';
+      return;
+    }
+
     if (!keyword || keyword.length < 1) {
       sugEl.innerHTML = '';
       sugEl.style.display = 'none';
+      return;
+    }
+
+    if (this.state.lineSourceMode === 'tanka') {
+      this.updateTankaSuggestions(keyword, sugEl);
       return;
     }
 
@@ -829,8 +923,8 @@ const QuoteEdit = {
       .slice(0, 8);
 
     if (matches.length === 0) {
-      sugEl.innerHTML = '';
-      sugEl.style.display = 'none';
+      sugEl.innerHTML = '<div class="ql-suggest-empty">単価マスタに該当なし（tankatoolタブ、または自由入力もお試しください）</div>';
+      sugEl.style.display = 'block';
       return;
     }
 
@@ -857,6 +951,50 @@ const QuoteEdit = {
     });
   },
 
+  /**
+   * tankatool(岐阜県単価DB)側の候補表示。
+   * 件数が多い(9,000件超)ため、品名・仕様の両方に一致するものを優先しつつ上位10件のみ表示。
+   */
+  updateTankaSuggestions(keyword, sugEl) {
+    const data = this.state.tankaPrices;
+    if (!data) {
+      sugEl.innerHTML = '<div class="ql-suggest-loading">tankatoolのデータを読み込み中…</div>';
+      sugEl.style.display = 'block';
+      return;
+    }
+
+    const kw = keyword.toLowerCase();
+    const matches = data
+      .filter(p => (p.name || '').toLowerCase().includes(kw) ||
+                    (p.spec || '').toLowerCase().includes(kw))
+      .slice(0, 10);
+
+    if (matches.length === 0) {
+      sugEl.innerHTML = '<div class="ql-suggest-empty">tankatoolに該当なし（単価マスタタブ、または自由入力もお試しください）</div>';
+      sugEl.style.display = 'block';
+      return;
+    }
+
+    sugEl.innerHTML = matches.map((p, i) => {
+      const spec = p.spec ? ` / ${this.escapeHtml(p.spec)}` : '';
+      return `
+        <div class="ql-suggest-item" data-idx="${i}">
+          <div class="ql-suggest-name">${this.escapeHtml(p.name)}${spec}</div>
+          <div class="ql-suggest-meta">${this.escapeHtml(p.category)} / ¥${Number(p.composite_price).toLocaleString('ja-JP')}/${this.escapeHtml(p.unit)}（岐阜県公式単価）</div>
+        </div>
+      `;
+    }).join('');
+    sugEl.style.display = 'block';
+
+    sugEl.querySelectorAll('.ql-suggest-item').forEach(el => {
+      el.addEventListener('click', () => {
+        const p = matches[Number(el.dataset.idx)];
+        if (p) this.fillFromTankaPrice(p);
+        sugEl.style.display = 'none';
+      });
+    });
+  },
+
   fillFromUnitPrice(p) {
     document.getElementById('ql-item-name').value = p.item_name || '';
     document.getElementById('ql-spec').value = p.spec || '';
@@ -871,6 +1009,20 @@ const QuoteEdit = {
       priceValue = p.price_embedded || 0;
     }
     document.getElementById('ql-price').value = priceValue;
+  },
+
+  /**
+   * tankatool(岐阜県単価DB)の1件をダイアログのフォームに反映する。
+   * tankatool独自の「category」「work」はKE-Mitsumoriの工種マスタとは体系が異なるため、
+   * 工種(category_id)は自動変更せず、現在選択されている工種のままにする。
+   * work(施工方法)の情報は仕様欄に括弧書きで残す。
+   */
+  fillFromTankaPrice(p) {
+    document.getElementById('ql-item-name').value = p.name || '';
+    const specWithWork = p.work ? `${p.spec || ''}（${p.work}）` : (p.spec || '');
+    document.getElementById('ql-spec').value = specWithWork.trim();
+    document.getElementById('ql-unit').value = p.unit || 'ケ所';
+    document.getElementById('ql-price').value = p.composite_price || 0;
   },
 
   closeLineDialog() {
@@ -916,6 +1068,280 @@ const QuoteEdit = {
     this.closeLineDialog();
     this.renderLines();
     this.renderSummary();
+  },
+
+  // ===== 音声/AI入力 =====
+
+  openAiInputDialog() {
+    this.state.aiPreviewItems = null;
+    this.state.aiRecognizing = false;
+
+    const dialog = document.getElementById('qe-dialog');
+    dialog.innerHTML = `
+      <div class="dialog-overlay" id="qe-ai-overlay">
+        <div class="dialog">
+          <div class="dialog-header">
+            <h3>🎤 音声/AI入力</h3>
+            <button class="icon-btn" id="qe-ai-close">×</button>
+          </div>
+          <div class="dialog-body">
+            <div class="form-group">
+              <label>話す、または直接入力してください</label>
+              <textarea id="qe-ai-text" rows="4" placeholder="例：電灯配線を3ヶ所、LED照明を5台お願いします"></textarea>
+            </div>
+            <div class="qe-ai-controls">
+              <button type="button" id="qe-ai-mic-btn" class="secondary">🎤 話す</button>
+              <button type="button" id="qe-ai-analyze-btn">AIで解析</button>
+            </div>
+            <div id="qe-ai-status" class="qe-ai-status"></div>
+            <div id="qe-ai-preview"></div>
+          </div>
+          <div class="dialog-footer">
+            <button class="secondary" id="qe-ai-cancel">キャンセル</button>
+            <button id="qe-ai-confirm" disabled>選択した項目を追加</button>
+          </div>
+        </div>
+      </div>
+    `;
+    dialog.classList.add('open');
+
+    document.getElementById('qe-ai-overlay').addEventListener('click', (e) => {
+      if (e.target.id === 'qe-ai-overlay') this.closeAiDialog();
+    });
+    document.getElementById('qe-ai-close').addEventListener('click', () => this.closeAiDialog());
+    document.getElementById('qe-ai-cancel').addEventListener('click', () => this.closeAiDialog());
+    document.getElementById('qe-ai-mic-btn').addEventListener('click', () => this.toggleVoiceRecognition());
+    document.getElementById('qe-ai-analyze-btn').addEventListener('click', () => this.runAiAnalysis());
+    document.getElementById('qe-ai-confirm').addEventListener('click', () => this.confirmAiLines());
+
+    setTimeout(() => document.getElementById('qe-ai-text')?.focus(), 50);
+  },
+
+  closeAiDialog() {
+    if (this.state.aiRecognition) {
+      try { this.state.aiRecognition.stop(); } catch (e) { /* noop */ }
+    }
+    const dialog = document.getElementById('qe-dialog');
+    dialog.classList.remove('open');
+    dialog.innerHTML = '';
+    this.state.aiPreviewItems = null;
+  },
+
+  /**
+   * ブラウザ標準のWeb Speech APIで音声認識を開始/停止する。
+   * Chrome(PC/Android)向け。Safari/iOSは対応が不安定なため非対応の場合はメッセージを出す。
+   */
+  toggleVoiceRecognition() {
+    const statusEl = document.getElementById('qe-ai-status');
+    const micBtn = document.getElementById('qe-ai-mic-btn');
+    const textEl = document.getElementById('qe-ai-text');
+
+    if (this.state.aiRecognizing) {
+      this.state.aiRecognition?.stop();
+      return;
+    }
+
+    const SpeechRecognitionClass = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognitionClass) {
+      Util.toast('お使いのブラウザは音声入力に対応していません（Chrome推奨）', 'warning');
+      return;
+    }
+
+    const recognition = new SpeechRecognitionClass();
+    recognition.lang = 'ja-JP';
+    recognition.interimResults = true;
+    recognition.continuous = true;
+
+    const baseText = textEl.value ? textEl.value.trim() + ' ' : '';
+
+    recognition.onstart = () => {
+      this.state.aiRecognizing = true;
+      micBtn.textContent = '⏹ 停止';
+      micBtn.classList.add('recording');
+      statusEl.textContent = '聞き取り中…';
+    };
+    recognition.onresult = (event) => {
+      let finalText = '';
+      let interimText = '';
+      for (let i = 0; i < event.results.length; i++) {
+        const t = event.results[i][0].transcript;
+        if (event.results[i].isFinal) finalText += t;
+        else interimText += t;
+      }
+      textEl.value = baseText + finalText + interimText;
+    };
+    recognition.onerror = (event) => {
+      statusEl.textContent = '';
+      Util.toast(`音声入力エラー: ${event.error}`, 'error');
+    };
+    recognition.onend = () => {
+      this.state.aiRecognizing = false;
+      micBtn.textContent = '🎤 話す';
+      micBtn.classList.remove('recording');
+      statusEl.textContent = '';
+    };
+
+    this.state.aiRecognition = recognition;
+    recognition.start();
+  },
+
+  /**
+   * テキストをGAS経由でClaude(Haiku 4.5)に渡し、明細候補に分解する。
+   */
+  async runAiAnalysis() {
+    const textEl = document.getElementById('qe-ai-text');
+    const statusEl = document.getElementById('qe-ai-status');
+    const text = textEl.value.trim();
+
+    if (!text) {
+      Util.toast('内容を話すか入力してください', 'warning');
+      return;
+    }
+
+    statusEl.textContent = 'AIが解析中…';
+    document.getElementById('qe-ai-analyze-btn').disabled = true;
+
+    try {
+      const res = await API.ai.parseLines(text);
+      const rawItems = res.data.items || [];
+
+      // 単価マスタと突合し、一致するものは単価・単位を補完する
+      this.state.aiPreviewItems = rawItems.map(item => {
+        const matched = this.matchUnitPriceFor(item.item_name, item.spec);
+        return {
+          include: true,
+          item_name: item.item_name || '',
+          spec: item.spec || '',
+          qty: Number(item.qty) || 1,
+          unit: (matched ? matched.standard_unit : item.unit) || 'ケ所',
+          price: matched ? (matched.price_embedded || 0) : 0,
+          category_id: item.category_id || '',
+          matched: !!matched
+        };
+      });
+
+      statusEl.textContent = '';
+      this.renderAiPreview();
+    } catch (err) {
+      statusEl.textContent = '';
+      Util.toast(`AI解析エラー: ${err.message}`, 'error');
+    } finally {
+      document.getElementById('qe-ai-analyze-btn').disabled = false;
+    }
+  },
+
+  /**
+   * 品名/仕様から単価マスタの一致候補を探す(部分一致の簡易マッチング)。
+   */
+  matchUnitPriceFor(itemName, spec) {
+    if (!itemName) return null;
+    const name = itemName.toLowerCase();
+    return this.state.unitPrices.find(p => {
+      const pName = (p.item_name || '').toLowerCase();
+      return pName.includes(name) || name.includes(pName);
+    }) || null;
+  },
+
+  renderAiPreview() {
+    const el = document.getElementById('qe-ai-preview');
+    const confirmBtn = document.getElementById('qe-ai-confirm');
+    const items = this.state.aiPreviewItems;
+
+    if (!items || items.length === 0) {
+      el.innerHTML = '<div class="empty-state">抽出できた項目がありませんでした</div>';
+      confirmBtn.disabled = true;
+      return;
+    }
+
+    el.innerHTML = `
+      <div class="qe-ai-preview-label">抽出結果（${items.length}件）内容を確認・編集してから追加してください</div>
+      ${items.map((it, idx) => `
+        <div class="qe-ai-item">
+          <div class="qe-ai-item-top">
+            <label><input type="checkbox" class="qe-ai-f-include" data-idx="${idx}" ${it.include ? 'checked' : ''}></label>
+            <input type="text" class="qe-ai-f-name" data-idx="${idx}" value="${this.escapeHtml(it.item_name)}" placeholder="品名">
+            ${it.matched ? '<span class="badge badge-success">単価マスタ一致</span>' : '<span class="badge badge-warning">要確認</span>'}
+          </div>
+          <div class="qe-ai-item-row">
+            <input type="text" class="qe-ai-f-spec" data-idx="${idx}" value="${this.escapeHtml(it.spec)}" placeholder="仕様">
+            <select class="qe-ai-f-category" data-idx="${idx}">
+              <option value="">工種未選択</option>
+              ${this.state.workCategories.map(c =>
+                `<option value="${c.category_id}" ${c.category_id === it.category_id ? 'selected' : ''}>${this.escapeHtml(c.category_name)}</option>`
+              ).join('')}
+            </select>
+          </div>
+          <div class="qe-ai-item-row">
+            <input type="number" class="qe-ai-f-qty" data-idx="${idx}" value="${it.qty}" step="0.01" placeholder="数量">
+            <input type="text" class="qe-ai-f-unit" data-idx="${idx}" value="${this.escapeHtml(it.unit)}" placeholder="単位">
+            <input type="number" class="qe-ai-f-price" data-idx="${idx}" value="${it.price}" step="1" placeholder="単価">
+          </div>
+        </div>
+      `).join('')}
+    `;
+    confirmBtn.disabled = false;
+
+    // 編集内容をstateに反映するイベント
+    const bindField = (selector, field, isNumber) => {
+      el.querySelectorAll(selector).forEach(input => {
+        input.addEventListener('input', () => {
+          const idx = parseInt(input.dataset.idx, 10);
+          this.state.aiPreviewItems[idx][field] = isNumber ? (Number(input.value) || 0) : input.value;
+        });
+      });
+    };
+    bindField('.qe-ai-f-include', 'include', false);
+    el.querySelectorAll('.qe-ai-f-include').forEach(cb => {
+      cb.addEventListener('change', () => {
+        const idx = parseInt(cb.dataset.idx, 10);
+        this.state.aiPreviewItems[idx].include = cb.checked;
+      });
+    });
+    bindField('.qe-ai-f-name', 'item_name', false);
+    bindField('.qe-ai-f-spec', 'spec', false);
+    bindField('.qe-ai-f-category', 'category_id', false);
+    bindField('.qe-ai-f-qty', 'qty', true);
+    bindField('.qe-ai-f-unit', 'unit', false);
+    bindField('.qe-ai-f-price', 'price', true);
+  },
+
+  /**
+   * チェックの入った項目を、通常の明細と同じ形式でstate.linesに追加する。
+   */
+  confirmAiLines() {
+    const items = (this.state.aiPreviewItems || []).filter(it => it.include);
+    if (items.length === 0) {
+      Util.toast('追加する項目を選択してください', 'warning');
+      return;
+    }
+
+    const missingCategory = items.some(it => !it.category_id);
+    if (missingCategory) {
+      Util.toast('工種が未選択の項目があります。すべて選択してください', 'warning');
+      return;
+    }
+
+    items.forEach(it => {
+      this.state.lines.push({
+        line_id: null,
+        category_id: it.category_id,
+        item_name: it.item_name,
+        spec: it.spec,
+        qty: it.qty,
+        unit: it.unit,
+        price: it.price,
+        is_supplied: false,
+        show_price: true,
+        mount_type: '埋込',
+        line_note: ''
+      });
+    });
+
+    this.markDirty();
+    this.closeAiDialog();
+    this.renderLines();
+    this.renderSummary();
+    Util.toast(`${items.length}件の明細を追加しました`, 'success');
   },
 
   // ===== 顧客選択ダイアログ =====

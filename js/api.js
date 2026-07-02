@@ -128,6 +128,11 @@ const API = {
     list: () => API.request('setting', 'list'),
     get: (key) => API.request('setting', 'get', { id: key }),
     update: (key, value) => API.request('setting', 'update', { id: key, setting_value: value })
+  },
+
+  ai: {
+    // 音声入力/AI入力: テキストを明細候補(配列)に分解する
+    parseLines: (text) => API.request('ai', 'parse_lines', { text })
   }
 };
 
