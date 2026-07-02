@@ -35,7 +35,7 @@ body {
   margin: 0;
   padding: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", "Meiryo", sans-serif;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.6;
   color: var(--color-text);
   background: var(--color-bg);
@@ -46,7 +46,7 @@ body {
   background: var(--color-warning-bg);
   color: var(--color-warning);
   padding: 6px 16px;
-  font-size: 11px;
+  font-size: 13px;
   text-align: center;
   border-bottom: 1px solid var(--color-warning);
 }
@@ -72,13 +72,13 @@ body {
 
 .app-header h1 {
   margin: 0;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 600;
   flex: 1;
 }
 
 .app-header .version {
-  font-size: 11px;
+  font-size: 13px;
   opacity: 0.8;
 }
 
@@ -101,7 +101,7 @@ body {
 
 .view-header h2 {
   margin: 0;
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 600;
   flex: 1;
 }
@@ -117,14 +117,14 @@ body {
 
 .card h3 {
   margin: 0 0 12px;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
   color: var(--color-primary);
 }
 
 .card p, .card ul, .card li {
   margin: 8px 0;
-  font-size: 13px;
+  font-size: 15px;
 }
 
 .placeholder-note {
@@ -132,7 +132,7 @@ body {
   color: var(--color-info);
   padding: 10px 12px;
   border-radius: var(--radius-md);
-  font-size: 12px;
+  font-size: 14px;
 }
 
 /* ---------- 数値カードグリッド ---------- */
@@ -152,13 +152,13 @@ body {
 }
 
 .stat-num {
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 600;
   color: var(--color-primary);
 }
 
 .stat-label {
-  font-size: 11px;
+  font-size: 13px;
   color: var(--color-text-secondary);
   margin-top: 4px;
 }
@@ -181,7 +181,7 @@ body {
 
 /* ---------- リスト ---------- */
 .list-count {
-  font-size: 11px;
+  font-size: 13px;
   color: var(--color-text-secondary);
   padding: 4px 4px 8px;
 }
@@ -199,7 +199,7 @@ body {
   padding: 32px 16px;
   text-align: center;
   color: var(--color-text-tertiary);
-  font-size: 13px;
+  font-size: 15px;
 }
 
 /* ---------- 案件カード ---------- */
@@ -228,12 +228,12 @@ body {
 }
 
 .project-meta {
-  font-size: 11px;
+  font-size: 13px;
   color: var(--color-text-secondary);
 }
 
 .project-name {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
   margin: 4px 0;
 }
@@ -246,12 +246,12 @@ body {
 }
 
 .project-customer {
-  font-size: 11px;
+  font-size: 13px;
   color: var(--color-text-secondary);
 }
 
 .project-amount {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
 }
 
@@ -272,7 +272,7 @@ body {
 }
 
 .customer-name {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
   flex: 1;
 }
@@ -284,7 +284,7 @@ body {
 }
 
 .customer-meta {
-  font-size: 11px;
+  font-size: 13px;
   color: var(--color-text-secondary);
 }
 
@@ -299,7 +299,7 @@ body {
   padding: 6px 8px;
   background: var(--color-bg);
   border-radius: 4px;
-  font-size: 11px;
+  font-size: 13px;
   color: var(--color-text-secondary);
 }
 
@@ -321,12 +321,12 @@ body {
 }
 
 .up-name {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
 }
 
 .up-spec {
-  font-size: 11px;
+  font-size: 13px;
   color: var(--color-text-secondary);
   margin-top: 2px;
 }
@@ -339,7 +339,7 @@ body {
 }
 
 .up-tag {
-  font-size: 10px;
+  font-size: 12px;
   padding: 1px 6px;
   border-radius: 4px;
   background: var(--color-bg);
@@ -352,12 +352,12 @@ body {
 }
 
 .up-main-price {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
 }
 
 .up-sub {
-  font-size: 11px;
+  font-size: 13px;
   color: var(--color-text-secondary);
   margin-top: 2px;
 }
@@ -367,7 +367,7 @@ body {
   display: inline-block;
   padding: 1px 8px;
   border-radius: 10px;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 500;
 }
 
@@ -412,7 +412,7 @@ body {
   text-decoration: none;
   color: var(--color-text);
   box-shadow: var(--shadow-sm);
-  font-size: 12px;
+  font-size: 14px;
   transition: background 0.15s;
 }
 
@@ -421,7 +421,7 @@ body {
 }
 
 .nav-icon {
-  font-size: 24px;
+  font-size: 26px;
   margin-bottom: 4px;
 }
 
@@ -430,7 +430,7 @@ body {
   display: inline-block;
   padding: 6px 12px;
   border-radius: var(--radius-md);
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 500;
   margin: 8px 0;
 }
@@ -447,7 +447,7 @@ button {
   border: none;
   padding: 8px 16px;
   border-radius: var(--radius-md);
-  font-size: 13px;
+  font-size: 15px;
   cursor: pointer;
   transition: background 0.2s;
   font-family: inherit;
@@ -476,7 +476,7 @@ button.secondary:hover { background: var(--color-info-bg); }
   background: transparent;
   color: var(--color-text);
   padding: 4px 10px;
-  font-size: 12px;
+  font-size: 14px;
   border: 1px solid var(--color-border);
 }
 
@@ -494,14 +494,14 @@ button.secondary:hover { background: var(--color-info-bg); }
 /* ---------- フォーム要素 ---------- */
 input, select, textarea {
   font-family: inherit;
-  font-size: 13px;
-  padding: 8px 10px;
+  font-size: 15px;
+  padding: 9px 12px;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   background: var(--color-surface);
   color: var(--color-text);
   width: 100%;
-  height: 36px;
+  height: 42px;
 }
 
 textarea {
@@ -517,7 +517,7 @@ input:focus, select:focus, textarea:focus {
 
 label {
   display: block;
-  font-size: 11px;
+  font-size: 13px;
   color: var(--color-text-secondary);
   margin-bottom: 4px;
   font-weight: 500;
@@ -558,7 +558,7 @@ label {
   background: var(--color-surface);
   border-radius: var(--radius-lg);
   width: 100%;
-  max-width: 500px;
+  max-width: 560px;
   box-shadow: var(--shadow-lg);
   overflow: hidden;
 }
@@ -573,7 +573,7 @@ label {
 
 .dialog-header h3 {
   margin: 0;
-  font-size: 16px;
+  font-size: 18px;
   color: var(--color-text);
 }
 
@@ -598,7 +598,7 @@ label {
   padding: 12px;
   border-radius: var(--radius-md);
   font-family: "SF Mono", Monaco, "Courier New", monospace;
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.5;
   overflow-x: auto;
   white-space: pre-wrap;
@@ -611,7 +611,7 @@ label {
 .app-footer {
   text-align: center;
   padding: 20px;
-  font-size: 11px;
+  font-size: 13px;
   color: var(--color-text-secondary);
 }
 
@@ -629,7 +629,7 @@ label {
   opacity: 0;
   transition: all 0.3s;
   z-index: 9999;
-  font-size: 12px;
+  font-size: 14px;
   max-width: 90%;
 }
 
@@ -668,12 +668,12 @@ label {
 }
 
 .qe-meta {
-  font-size: 11px;
+  font-size: 13px;
   color: var(--color-text-secondary);
 }
 
 .qe-quote-no {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 600;
   font-family: "SF Mono", Monaco, monospace;
 }
@@ -686,7 +686,7 @@ label {
 }
 
 .qe-section-label {
-  font-size: 11px;
+  font-size: 13px;
   color: var(--color-text-secondary);
   letter-spacing: 0.5px;
   margin-bottom: 8px;
@@ -701,19 +701,19 @@ label {
 }
 
 .qe-customer-name {
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 500;
 }
 
 .qe-customer-meta {
-  font-size: 11px;
+  font-size: 13px;
   color: var(--color-text-secondary);
   margin-top: 2px;
 }
 
 .qe-customer-empty {
   color: var(--color-text-tertiary);
-  font-size: 13px;
+  font-size: 15px;
 }
 
 /* 工種ブロック */
@@ -731,7 +731,7 @@ label {
   justify-content: space-between;
   align-items: center;
   font-weight: 500;
-  font-size: 13px;
+  font-size: 15px;
 }
 
 .qe-category-name { color: var(--color-text); }
@@ -739,7 +739,7 @@ label {
 .qe-category-subtotal {
   font-family: "SF Mono", Monaco, monospace;
   color: var(--color-text-secondary);
-  font-size: 13px;
+  font-size: 15px;
 }
 
 .qe-category-lines { background: var(--color-surface); }
@@ -754,6 +754,89 @@ label {
 .qe-add-category {
   margin: 12px 0;
   text-align: center;
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.qe-ai-input-btn {
+  background: linear-gradient(135deg, #7c4dff, #536dfe);
+  color: #fff;
+  border: none;
+}
+
+.qe-ai-input-btn:hover {
+  background: linear-gradient(135deg, #6a3dff, #3d5afe);
+}
+
+.qe-ai-controls {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.qe-ai-controls button {
+  flex: 1;
+}
+
+#qe-ai-mic-btn.recording {
+  background: var(--color-error-bg);
+  color: var(--color-error);
+  border-color: var(--color-error);
+  animation: qe-ai-pulse 1.2s infinite;
+}
+
+@keyframes qe-ai-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.qe-ai-status {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  text-align: center;
+  min-height: 18px;
+  margin-bottom: 4px;
+}
+
+.qe-ai-preview-label {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  margin-bottom: 8px;
+}
+
+.qe-ai-item {
+  background: var(--color-bg);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+  margin-bottom: 8px;
+}
+
+.qe-ai-item-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.qe-ai-item-top input[type="text"] {
+  flex: 1;
+  height: 36px;
+}
+
+.qe-ai-item-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.qe-ai-item-row:last-child { margin-bottom: 0; }
+
+.qe-ai-item-row input, .qe-ai-item-row select {
+  height: 36px;
+  font-size: 14px;
 }
 
 /* 明細行 */
@@ -777,12 +860,12 @@ label {
 }
 
 .qe-line-name {
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 500;
 }
 
 .qe-line-meta {
-  font-size: 11px;
+  font-size: 13px;
   color: var(--color-text-secondary);
   margin-top: 2px;
 }
@@ -795,7 +878,7 @@ label {
 }
 
 .qe-line-amount {
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 600;
   font-family: "SF Mono", Monaco, monospace;
   min-width: 80px;
@@ -809,14 +892,14 @@ label {
 
 .qe-line-controls .icon-btn {
   padding: 2px 8px;
-  font-size: 11px;
+  font-size: 13px;
   min-width: 28px;
 }
 
 .qe-supplied-badge {
   background: var(--color-info-bg);
   color: var(--color-info);
-  font-size: 10px;
+  font-size: 12px;
   padding: 2px 8px;
   border-radius: 10px;
 }
@@ -832,12 +915,12 @@ label {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 13px;
+  font-size: 15px;
   padding: 4px 0;
 }
 
 .qe-summary-row.qe-sub {
-  font-size: 11px;
+  font-size: 13px;
   color: var(--color-text-secondary);
 }
 
@@ -850,7 +933,7 @@ label {
 
 .qe-summary-row.qe-final {
   font-weight: 600;
-  font-size: 15px;
+  font-size: 17px;
   border-top: 2px solid var(--color-primary);
   padding-top: 8px;
   margin-top: 4px;
@@ -888,7 +971,7 @@ label {
 }
 
 .qe-recommend {
-  font-size: 10px;
+  font-size: 12px;
   background: var(--color-warning-bg);
   color: var(--color-warning);
   padding: 1px 6px;
@@ -897,6 +980,35 @@ label {
 }
 
 /* オートコンプリート */
+.ql-source-tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.ql-source-tab {
+  flex: 1;
+  background: var(--color-bg);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+  padding: 7px 6px;
+  font-size: 13px;
+  border-radius: var(--radius-md);
+  text-align: center;
+  cursor: pointer;
+}
+
+.ql-source-tab:hover {
+  background: var(--color-primary-light);
+}
+
+.ql-source-tab.active {
+  background: var(--color-primary);
+  color: #fff;
+  border-color: var(--color-primary);
+  font-weight: 500;
+}
+
 .ql-suggestions {
   display: none;
   max-height: 240px;
@@ -909,7 +1021,7 @@ label {
 }
 
 .ql-suggest-item {
-  padding: 8px 10px;
+  padding: 10px 12px;
   cursor: pointer;
   border-bottom: 1px solid var(--color-bg);
 }
@@ -918,14 +1030,21 @@ label {
 .ql-suggest-item:hover { background: var(--color-primary-light); }
 
 .ql-suggest-name {
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 500;
 }
 
 .ql-suggest-meta {
-  font-size: 11px;
+  font-size: 13px;
   color: var(--color-text-secondary);
   margin-top: 2px;
+}
+
+.ql-suggest-loading, .ql-suggest-empty {
+  padding: 12px;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  text-align: center;
 }
 
 /* 顧客ピッカー、工種ピッカー、ステータスピッカー */
@@ -954,8 +1073,8 @@ label {
   background: var(--color-primary-light);
 }
 
-.qe-cust-item-name { font-weight: 500; font-size: 13px; }
-.qe-cust-item-meta { font-size: 11px; color: var(--color-text-secondary); margin-top: 2px; }
+.qe-cust-item-name { font-weight: 500; font-size: 15px; }
+.qe-cust-item-meta { font-size: 13px; color: var(--color-text-secondary); margin-top: 2px; }
 
 /* ====================================================
    見積書プレビュー画面
@@ -1240,7 +1359,7 @@ label {
 
 .up-actions .icon-btn {
   padding: 2px 8px;
-  font-size: 11px;
+  font-size: 13px;
   min-width: 40px;
 }
 
@@ -1258,7 +1377,7 @@ label {
   background: var(--color-bg);
   border-radius: var(--radius-md);
   cursor: pointer;
-  font-size: 12px;
+  font-size: 14px;
   border: 1px solid transparent;
 }
 
@@ -1270,7 +1389,7 @@ label {
 .qe-notes-templates-btn {
   float: right;
   padding: 1px 8px !important;
-  font-size: 10px !important;
+  font-size: 12px !important;
   margin-top: -2px;
 }
 
@@ -1283,7 +1402,7 @@ label {
 
 .btn-copy-project {
   padding: 2px 8px !important;
-  font-size: 10px !important;
+  font-size: 12px !important;
 }
 
 /* ドラッグハンドル */
@@ -1298,7 +1417,7 @@ label {
   color: var(--color-text-tertiary);
   cursor: grab;
   padding: 4px 6px 4px 0;
-  font-size: 16px;
+  font-size: 18px;
   line-height: 1;
   letter-spacing: -2px;
   flex-shrink: 0;
@@ -1352,13 +1471,13 @@ label {
 }
 
 .set-row-key {
-  font-size: 12px;
+  font-size: 14px;
   font-family: "SF Mono", Monaco, monospace;
   font-weight: 500;
 }
 
 .set-row-desc {
-  font-size: 11px;
+  font-size: 13px;
   color: var(--color-text-secondary);
   margin-top: 2px;
 }
@@ -1370,7 +1489,7 @@ label {
 
 .set-row-value input {
   height: 32px;
-  font-size: 13px;
+  font-size: 15px;
   text-align: right;
 }
 
@@ -1401,7 +1520,7 @@ label {
 
 .csv-toolbar .icon-btn {
   padding: 4px 10px;
-  font-size: 11px;
+  font-size: 13px;
 }
 
 /* CSV取込プレビューダイアログ */
@@ -1416,7 +1535,7 @@ label {
 .csv-preview table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 11px;
+  font-size: 13px;
   font-family: "SF Mono", Monaco, monospace;
 }
 
@@ -1443,7 +1562,7 @@ label {
   color: var(--color-error);
   padding: 8px 12px;
   border-radius: var(--radius-md);
-  font-size: 11px;
+  font-size: 13px;
   margin-top: 8px;
 }
 
